@@ -2,12 +2,29 @@
   "name": "piston-story-ai",
   "version": "1.0.0",
   "description": "Generate unique stories with AI",
+  "type": "module",
   "main": "src/index.ts",
   "scripts": {
     "dev": "tsx --watch src/index.ts"
   },
-  "keywords": ["ai", "story", "piston"],
+  "keywords": [
+    "ai",
+    "story",
+    "piston"
+  ],
   "author": "AlexProgrammerDE",
   "license": "ISC",
-  "packageManager": "pnpm@10.9.0"
+  "packageManager": "pnpm@10.9.0",
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@ai-sdk/groq": "^1.2.9",
+    "ai": "^4.3.16",
+    "dotenv-flow": "^4.1.0",
+    "inquirer": "^12.6.3",
+    "zod": "^3.25.46"
+  }
 }
