@@ -1,0 +1,13 @@
+{
+  "name": "piston-story-ai",
+  "version": "1.0.0",
+  "description": "Generate unique stories with AI",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx --watch src/index.ts"
+  },
+  "keywords": ["ai", "story", "piston"],
+  "author": "AlexProgrammerDE",
+  "license": "ISC",
+  "packageManager": "pnpm@10.9.0"
+}
