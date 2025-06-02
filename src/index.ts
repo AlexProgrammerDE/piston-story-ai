@@ -204,6 +204,7 @@ async function run() {
             `
   });
 
+  console.log("Story segments result: ", segments.object);
   if (!(await inquirer
       .prompt([
         {
@@ -215,8 +216,6 @@ async function run() {
     console.log('Text generation cancelled.');
     return;
   }
-
-  console.log("Story segments result: ", segments.object);
 
   const generatedSegments: string[] = []
   for (const segment of segments.object.segments) {
