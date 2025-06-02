@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@ai-sdk/groq':
         specifier: ^1.2.9
-        version: 1.2.9(zod@3.25.46)
+        version: 1.2.9(zod@3.25.47)
       ai:
         specifier: ^4.3.16
-        version: 4.3.16(react@19.1.0)(zod@3.25.46)
+        version: 4.3.16(react@19.1.0)(zod@3.25.47)
       dotenv-flow:
         specifier: ^4.1.0
         version: 4.1.0
@@ -22,7 +22,7 @@ importers:
         version: 12.6.3(@types/node@22.15.29)
       zod:
         specifier: ^3.25.46
-        version: 3.25.46
+        version: 3.25.47
     devDependencies:
       '@types/node':
         specifier: ^22.15.29
@@ -545,44 +545,44 @@ packages:
     peerDependencies:
       zod: ^3.24.1
 
-  zod@3.25.46:
-    resolution: {integrity: sha512-IqRxcHEIjqLd4LNS/zKffB3Jzg3NwqJxQQ0Ns7pdrvgGkwQsEBdEQcOHaBVqvvZArShRzI39+aMST3FBGmTrLQ==}
+  zod@3.25.47:
+    resolution: {integrity: sha512-+f8+agSYoT9niC0VUL60IuXnr81FJeJ27Lf5YPrmcxTWmygcpGBeEuAAovDDEjkyQ36KyqNswwbhISZ1Z7yY+A==}
 
 snapshots:
 
-  '@ai-sdk/groq@1.2.9(zod@3.25.46)':
+  '@ai-sdk/groq@1.2.9(zod@3.25.47)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.46)
-      zod: 3.25.46
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.47)
+      zod: 3.25.47
 
-  '@ai-sdk/provider-utils@2.2.8(zod@3.25.46)':
+  '@ai-sdk/provider-utils@2.2.8(zod@3.25.47)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
       nanoid: 3.3.11
       secure-json-parse: 2.7.0
-      zod: 3.25.46
+      zod: 3.25.47
 
   '@ai-sdk/provider@1.1.3':
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@1.2.12(react@19.1.0)(zod@3.25.46)':
+  '@ai-sdk/react@1.2.12(react@19.1.0)(zod@3.25.47)':
     dependencies:
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.46)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.46)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.47)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.47)
       react: 19.1.0
       swr: 2.3.3(react@19.1.0)
       throttleit: 2.1.0
     optionalDependencies:
-      zod: 3.25.46
+      zod: 3.25.47
 
-  '@ai-sdk/ui-utils@1.2.11(zod@3.25.46)':
+  '@ai-sdk/ui-utils@1.2.11(zod@3.25.47)':
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.46)
-      zod: 3.25.46
-      zod-to-json-schema: 3.24.5(zod@3.25.46)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.47)
+      zod: 3.25.47
+      zod-to-json-schema: 3.24.5(zod@3.25.47)
 
   '@esbuild/aix-ppc64@0.25.5':
     optional: true
@@ -783,15 +783,15 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  ai@4.3.16(react@19.1.0)(zod@3.25.46):
+  ai@4.3.16(react@19.1.0)(zod@3.25.47):
     dependencies:
       '@ai-sdk/provider': 1.1.3
-      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.46)
-      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.25.46)
-      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.46)
+      '@ai-sdk/provider-utils': 2.2.8(zod@3.25.47)
+      '@ai-sdk/react': 1.2.12(react@19.1.0)(zod@3.25.47)
+      '@ai-sdk/ui-utils': 1.2.11(zod@3.25.47)
       '@opentelemetry/api': 1.9.0
       jsondiffpatch: 0.6.0
-      zod: 3.25.46
+      zod: 3.25.47
     optionalDependencies:
       react: 19.1.0
 
@@ -967,8 +967,8 @@ snapshots:
 
   yoctocolors-cjs@2.1.2: {}
 
-  zod-to-json-schema@3.24.5(zod@3.25.46):
+  zod-to-json-schema@3.24.5(zod@3.25.47):
     dependencies:
-      zod: 3.25.46
+      zod: 3.25.47
 
-  zod@3.25.46: {}
+  zod@3.25.47: {}
