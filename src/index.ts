@@ -3,17 +3,17 @@ import {generateObject} from 'ai';
 import {groq} from "@ai-sdk/groq";
 import inquirer from 'inquirer';
 import {z} from 'zod'
-import tags from '../data/input/genres.json'
 import * as fs from "node:fs";
 
 enum Type {
   ShortStory = 'Short Story',
 }
 
-const model= groq('meta-llama/llama-4-maverick-17b-128e-instruct');
+const model = groq('meta-llama/llama-4-maverick-17b-128e-instruct');
 const providerOptions = {
-    // groq: {reasoningFormat: 'hidden'},
+  // groq: {reasoningFormat: 'hidden'},
 }
+
 async function run() {
   const initialPrompt = await inquirer
       .prompt([
@@ -40,7 +40,8 @@ async function run() {
     schema: z.object({
       type: z.nativeEnum(Type)
           .describe('The type of story to write.'),
-      genres: z.enum(tags as [string, ...string[]])
+      genres: z.string()
+          .max(100)
           .array()
           .min(1)
           .max(10)
@@ -63,6 +64,12 @@ async function run() {
           .min(0)
           .max(3)
           .describe('Any information about the users style of writing, preferences, or other details that can help the AI to write a better story.'),
+      topicInformation: z.string()
+          .max(500)
+          .array()
+          .min(0)
+          .max(5)
+          .describe('Any information about the topic of the story, such as historical context, cultural references, or other relevant details.'),
     }),
     providerOptions,
     maxRetries: 5,
@@ -90,27 +97,45 @@ async function run() {
   const story = await generateObject({
     model,
     schema: z.object({
-      characters: z.object({
+      title: z.string()
+          .max(100)
+          .describe('The title of the story.'),
+      entities: z.object({
         name: z.string()
             .max(50)
-            .describe('The name of the character.'),
+            .describe('The name of the entity.'),
         description: z.string()
             .max(500)
-            .describe('A short description of the character.'),
+            .describe('A short description of the entity.'),
         role: z.string()
             .max(100)
-            .describe('The role of the character in the story, e.g. protagonist, antagonist, sidekick, etc.'),
+            .describe('The role of the entity in the story, e.g. protagonist, antagonist, sidekick, etc.'),
         traits: z.string()
             .max(200)
             .array()
             .min(1)
             .max(5)
-            .describe('A list of traits or characteristics of the character.'),
+            .describe('A list of traits or entityistics of the entity.'),
+        strengths: z.string()
+            .max(200)
+            .array()
+            .min(1)
+            .max(5)
+            .describe('A list of strengths or positive attributes of the entity.'),
+        weaknesses: z.string()
+            .max(200)
+            .array()
+            .min(1)
+            .max(5)
+            .describe('A list of weaknesses or negative attributes of the entity.'),
+        motivation: z.string()
+            .max(200)
+            .describe('The motivation or goal of the entity in the story.'),
       })
           .array()
           .min(1)
           .max(10)
-          .describe('A list of characters in the story.'),
+          .describe('A list of entities in the story.'),
       setting: z.object({
         location: z.string()
             .max(200)
@@ -123,6 +148,12 @@ async function run() {
             .describe('The overall atmosphere or mood of the setting, e.g. dark, whimsical, futuristic, etc.'),
       })
           .describe('The setting of the story.'),
+      plotPoints: z.string()
+          .max(500)
+          .array()
+          .min(1)
+          .max(10)
+          .describe('A list of key plot points or events that will occur in the story.'),
     }),
     providerOptions,
     maxRetries: 5,
@@ -147,7 +178,7 @@ async function run() {
     return;
   }
 
-  const characterNames = story.object.characters.map(character => character.name);
+  const entityNames = story.object.entities.map(entity => entity.name);
   console.log("Continuing with story segments...");
   const segments = await generateObject({
     model,
@@ -156,17 +187,17 @@ async function run() {
         title: z.string()
             .max(100)
             .describe('The title of the segment.'),
-        characters: z.object({
-          name: z.enum(characterNames as [string, ...string[]])
-              .describe('The name of the character involved in this segment.'),
+        entities: z.object({
+          name: z.enum(entityNames as [string, ...string[]])
+              .describe('The name of the entity involved in this segment.'),
           mood: z.string()
               .max(100)
-              .describe('The mood of the character in this segment, e.g. happy, sad, angry, etc.'),
+              .describe('The mood of the entity in this segment, e.g. happy, sad, angry, etc.'),
         })
             .array()
             .min(1)
             .max(5)
-            .describe('A list of characters involved in this segment.'),
+            .describe('A list of entities involved in this segment.'),
         setting: z.object({
           location: z.string()
               .max(200)
@@ -217,8 +248,12 @@ async function run() {
     return;
   }
 
-  const generatedSegments: string[] = []
+  const generatedSegments: {
+    title: string;
+    content: string[];
+  }[] = []
   for (const segment of segments.object.segments) {
+    const previousSegment = generatedSegments.length === 0 ? null : generatedSegments[generatedSegments.length - 1];
     console.log(`Segment Title: ${segment.title}`);
     const generatedSegment = await generateObject({
       model,
@@ -237,19 +272,24 @@ async function run() {
             Story metadata result: ${JSON.stringify(story.object, null, 2)}
             Segment Details: ${JSON.stringify(segment, null, 2)}
             
+            The last segment this segment follows up on is: ${previousSegment ? `Title: ${previousSegment.title}\nContent: ${previousSegment.content.join('\n')}` : 'No previous segment.'}
+            
             Write a detailed and engaging segment based on the above information.
             Keep the content in plain text format, without any markdown or HTML tags.
             Keep the content concise and focused on the segment's key events and ideas.
             Do not include any additional information or context.
             The segment should be based on the metadata provided.
+            Make sure to stick to writing rules. For example do not use the same word more than 3 times in a row, do not use the same sentence structure more than 3 times in a row, etc.
             `
     });
 
-    generatedSegments.push(`### ${segment.title}\n\n` +
-        generatedSegment.object.content.join('\n\n'));
+    generatedSegments.push({
+      title: segment.title,
+      content: generatedSegment.object.content,
+    })
   }
 
-  fs.writeFileSync('data/output.txt', generatedSegments.join('\n\n'));
+  fs.writeFileSync(`data/${Date.now()}-output.txt`, `# ${story.object.title}\n\n${generatedSegments.map(segment => `## ${segment.title}\n\n${segment.content.join('\n')}\n`).join('\n')}`, 'utf-8');
   console.log("Text generation completed successfully.");
 }
 
