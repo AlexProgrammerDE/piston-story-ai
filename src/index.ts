@@ -1,5 +1,5 @@
 import 'dotenv-flow/config'
-import {generateObject} from 'ai';
+import {CoreMessage, generateObject} from 'ai';
 import {groq} from "@ai-sdk/groq";
 import inquirer from 'inquirer';
 import {z} from 'zod'
@@ -35,6 +35,23 @@ async function run() {
 
   const prompt = initialPrompt.prompt.trim();
   console.log("Starting the AI text generation script...");
+  const chatHistory: CoreMessage[] = [
+    {
+      role: 'system',
+      content: `You are a helpful writing assistant for writing stories. Follow the coming instructions to write a story. The current date is ${new Date().toLocaleDateString()}.`,
+    },
+  ];
+
+  chatHistory.push(
+      {
+        role: 'system',
+        content: "Analyze the request by the user on what story to write."
+      },
+      {
+        role: 'user',
+        content: prompt,
+      }
+  )
   const result = await generateObject({
     model,
     schema: z.object({
@@ -73,12 +90,13 @@ async function run() {
     }),
     providerOptions,
     maxRetries: 5,
-    prompt: `
-    You are a helpful writing assistant for writing stories. Use the following prompt to analyze the request by the user on what story to write.
-    
-    Prompt: ${prompt}
-    `
+    messages: chatHistory
   });
+
+  chatHistory.push({
+    role: 'assistant',
+    content: JSON.stringify(result.object, null, 2)
+  })
 
   console.log("Prompt analysis result: ", result.object);
   if (!(await inquirer
@@ -94,6 +112,12 @@ async function run() {
   }
 
   console.log("Continuing with story metadata...");
+  chatHistory.push(
+      {
+        role: 'system',
+        content: "Use the given prompt to generate the metadata for the story based on the analysis result."
+      },
+  )
   const story = await generateObject({
     model,
     schema: z.object({
@@ -157,12 +181,12 @@ async function run() {
     }),
     providerOptions,
     maxRetries: 5,
-    prompt: `
-        You are a helpful writing assistant for writing stories. Use the following prompt to generate the metadata for the story based on the analysis result.
-        
-        Prompt: ${prompt}
-        Prompt analysis result: ${JSON.stringify(result.object, null, 2)}
-        `
+    messages: chatHistory,
+  });
+
+  chatHistory.push({
+    role: 'assistant',
+    content: JSON.stringify(story.object, null, 2)
   })
 
   console.log("Story metadata result: ", story.object);
@@ -180,6 +204,12 @@ async function run() {
 
   const entityNames = story.object.entities.map(entity => entity.name);
   console.log("Continuing with story segments...");
+  chatHistory.push(
+      {
+        role: 'system',
+        content: "Use the given prompt to generate the segments for the story based on the metadata."
+      },
+  )
   const segments = await generateObject({
     model,
     schema: z.object({
@@ -226,14 +256,13 @@ async function run() {
     }),
     providerOptions,
     maxRetries: 5,
-    prompt: `
-            You are a helpful writing assistant for writing stories. Use the following prompt to generate the segments for the story based on the metadata.
-            
-            Prompt: ${prompt}
-            Prompt analysis result: ${JSON.stringify(result.object, null, 2)}
-            Story metadata result: ${JSON.stringify(story.object, null, 2)}
-            `
+    messages: chatHistory,
   });
+
+  chatHistory.push({
+    role: 'assistant',
+    content: JSON.stringify(segments.object, null, 2)
+  })
 
   console.log("Story segments result: ", segments.object);
   if (!(await inquirer
@@ -248,13 +277,28 @@ async function run() {
     return;
   }
 
+  chatHistory.push(
+      {
+        role: 'system',
+        content: "Generate the content for each segment based on the metadata and the previous segments. " +
+            "Write a detailed and engaging segment based on the above information. " +
+            "Keep the content in plain text format, without any markdown or HTML tags. " +
+            "Keep the content concise and focused on the segment's key events and ideas. " +
+            "Do not include any additional information or context. " +
+            "The segment should be based on the metadata provided. " +
+            "Make sure to stick to writing rules. For example do not use the same word more than 3 times in a row, do not use the same sentence structure more than 3 times in a row, etc."
+      },
+  );
   const generatedSegments: {
     title: string;
     content: string[];
   }[] = []
   for (const segment of segments.object.segments) {
-    const previousSegment = generatedSegments.length === 0 ? null : generatedSegments[generatedSegments.length - 1];
     console.log(`Segment Title: ${segment.title}`);
+    chatHistory.push({
+      role: 'user',
+      content: `Generate the content for the segment titled "${segment.title}" with the context. Follow all the rules and guidelines provided in the metadata.`,
+    });
     const generatedSegment = await generateObject({
       model,
       schema: z.object({
@@ -264,24 +308,12 @@ async function run() {
       }),
       providerOptions,
       maxRetries: 5,
-      prompt: `
-            You are a helpful writing assistant for writing stories. Use the following prompt to generate the content for the segment.
-            
-            Prompt: ${prompt}
-            Prompt analysis result: ${JSON.stringify(result.object, null, 2)}
-            Story metadata result: ${JSON.stringify(story.object, null, 2)}
-            Segment Details: ${JSON.stringify(segment, null, 2)}
-            
-            The last segment this segment follows up on is: ${previousSegment ? `Title: ${previousSegment.title}\nContent: ${previousSegment.content.join('\n')}` : 'No previous segment.'}
-            
-            Write a detailed and engaging segment based on the above information.
-            Keep the content in plain text format, without any markdown or HTML tags.
-            Keep the content concise and focused on the segment's key events and ideas.
-            Do not include any additional information or context.
-            The segment should be based on the metadata provided.
-            Make sure to stick to writing rules. For example do not use the same word more than 3 times in a row, do not use the same sentence structure more than 3 times in a row, etc.
-            `
+      messages: chatHistory
     });
+    chatHistory.push({
+      role: 'assistant',
+      content: JSON.stringify(generatedSegment.object, null, 2)
+    })
 
     generatedSegments.push({
       title: segment.title,
