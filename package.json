@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@ai-sdk/groq": "^1.2.9",
-    "ai": "^4.3.16",
+    "ai": "^5.0.0",
     "dotenv-flow": "^4.1.0",
     "inquirer": "^12.6.3",
     "zod": "^4.0.0"
