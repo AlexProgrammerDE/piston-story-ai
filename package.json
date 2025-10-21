@@ -16,7 +16,7 @@
   ],
   "author": "AlexProgrammerDE",
   "license": "ISC",
-  "packageManager": "pnpm@10.11.1",
+  "packageManager": "pnpm@10.18.3",
   "devDependencies": {
     "@types/node": "^22.15.29",
     "tsx": "^4.19.4",
