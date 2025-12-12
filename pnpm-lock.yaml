@@ -13,7 +13,7 @@ importers:
         version: 2.0.33(zod@4.1.13)
       ai:
         specifier: ^5.0.0
-        version: 5.0.112(zod@4.1.13)
+        version: 5.0.113(zod@4.1.13)
       dotenv-flow:
         specifier: ^4.1.0
         version: 4.1.0
@@ -362,8 +362,8 @@ packages:
     resolution: {integrity: sha512-fnYhv671l+eTTp48gB4zEsTW/YtRgRPnkI2nT7x6qw5rkI1Lq2hTmQIpHPgyThI0znLK+vX2n9XxKdXZ7BUbbw==}
     engines: {node: '>= 20'}
 
-  ai@5.0.112:
-    resolution: {integrity: sha512-Y0dluYpe5wn81UkfHbZL78mH6CsceUfMiu4oPRaWZvjlmcoXSPdEAsPcYbOjvX8ZPvQc6m4kNZhkcEXmT2ln4w==}
+  ai@5.0.113:
+    resolution: {integrity: sha512-26vivpSO/mzZj0k1Si2IpsFspp26ttQICHRySQiMrtWcRd5mnJMX2a8sG28vmZ38C+JUn1cWmfZrsLMxkSMw9g==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -716,7 +716,7 @@ snapshots:
 
   '@vercel/oidc@3.0.5': {}
 
-  ai@5.0.112(zod@4.1.13):
+  ai@5.0.113(zod@4.1.13):
     dependencies:
       '@ai-sdk/gateway': 2.0.21(zod@4.1.13)
       '@ai-sdk/provider': 2.0.0
