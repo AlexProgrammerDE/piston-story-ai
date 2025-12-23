@@ -23,7 +23,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@ai-sdk/groq": "^2.0.0",
+    "@ai-sdk/groq": "^3.0.0",
     "ai": "^5.0.0",
     "dotenv-flow": "^4.1.0",
     "inquirer": "^13.0.0",
